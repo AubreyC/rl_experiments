@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-24 14:42:41
+# @Last Modified time: 2018-08-24 18:55:17
 #
 # -----------------------------------------
 #
@@ -42,7 +42,6 @@ class Gridworld(object):
 
         # Current state of the agent
         self._current_state = (0,0);
-
 
         # State log
         self._state_log = [];
@@ -123,36 +122,127 @@ class Gridworld(object):
         # Ensure new state remains in the grid, do not move the agent if outside the grid
         if self.is_in_grid(new_state):
             self.move_current_state(new_state);
-            reward = self._get_reward(new_state)
-            print(reward)
+        #     reward = self._get_reward(self._current_state)
+        #     print(reward)
 
-        # If outside, do not move agent and return reward of -1
-        else:
-            reward = -1;
+        # # If outside, do not move agent and return reward of -1
+        # else:
+        #     reward = -1;
+
+        reward = self._get_reward(self._current_state)
+        print('Reward: {}'.format(reward))
 
         return False, self._current_state, reward;
 
+    """
+    Compute the probability of reaching s2_state from s1_state if action_id is taken
+    """
+    def compute_prob_state_action(self, s1_state_2d, s2_state_2d, action_id):
+
+        # Compute probability of action actually taken
+        prob_action = np.ones([5])*(float(1-self.prob_trans)/4);
+        prob_action[action_id] = self.prob_trans;
+
+        # Probability of reaching s2_state from s1_state if action_id is taken
+        prob = 0;
+
+        # Iterate through possible actions
+        for i_action in range(len(self.actions)):
+
+            # Get action
+            action = self.actions[i_action];
+            # Compute new state if this action is executed
+            new_state = (s1_state_2d[0] + action[0], s1_state_2d[1] + action[1]);
+            # Stay at previous state is new state is out of the grid
+            if not self.is_in_grid(new_state):
+                new_state = s1_state_2d;
+
+            # If s2_state is reached, add sum probability of the actions that resulted in reaching s2_state
+            # Important for the border states
+            if new_state == s2_state_2d:
+                prob = prob + prob_action[i_action]
+
+        return prob
+
+
+    """
+    Compute the probability of reaching the states from s1_state if action_id is taken
+    Shown on a grid representation
+    """
+    def compute_matrix_proc_state_action(self, s1_state_2d, action_id):
+
+        grid_prob = np.zeros(self.grid.shape);
+        for s1_i in range(self.grid.shape[0]):
+            for s1_j in range(self.grid.shape[1]):
+
+                grid_prob[s1_i, s1_j] = self.compute_prob_state_action(s1_state_2d, (s1_i, s1_j), action_id);
+
+
+        return grid_prob;
+
+
+    ##
+    ## Utils function
+    ##
+    ## Conversion from gridworld representation to standard MDP representation
+    ##
+
+    def get_MDP_format(self):
+        # Get number of states and number of actions
+        n_states = self.grid.shape[0]* self.grid.shape[0];
+        n_actions = len(self.actions);
+
+        # Compute the transition probability matrix: n_states x n_states x n_actions
+        # P_trans[s1, s2, a] = probability of reaching s2 from s1 when taking action a
+        P_trans = np.zeros([n_states, n_states, n_actions]);
+        for s1_i in range(self.grid.shape[0]):
+            for s1_j in range(self.grid.shape[1]):
+
+                # Compute state index in 1d representation
+                s1_state_1d = s1_i*self.grid.shape[1] + s1_j;
+
+                for s2_i in range(self.grid.shape[0]):
+                    for s2_j in range(self.grid.shape[1]):
+                        # Compute state index in 1d representation
+                        s2_state_1d = s2_i*self.grid.shape[1] + s2_j;
+
+
+                        for i_action in range(n_actions):
+                            P_trans[s1_state_1d, s2_state_1d, i_action] = self.compute_prob_state_action((s1_i, s1_j), (s2_i, s2_j), i_action);
+
+        # Simple reward model:
+        rewards = np.zeros(n_states);
+        rewards[-1] = self.grid[-1, -1];
+
+        return n_states, n_actions, P_trans, rewards;
 
 if __name__ == "__main__":
 
     # Create gridworld
-    gw = Gridworld(10, 0.5);
+    gw = Gridworld(3,0.5);
 
     # Take some actions
-    for i in range(10):
+    for i in range(30):
         done_flag, st, rw = gw.take_action(2);
         done_flag, st, rw = gw.take_action(3);
+
+    grid_prob = gw.compute_matrix_proc_state_action((0,1), 1);
+    print grid_prob
 
     grid_path = copy.copy(gw.grid);
     for state_visited in gw.get_state_log():
         grid_path[state_visited[0],state_visited[1]] = state_visited[0]+state_visited[1];
 
+    n_states, n_actions, p_trans, rewards = gw.get_MDP_format();
+    print(p_trans[:,:,1])
     # plots
     plt.figure()
-    plt.subplot(1, 2, 1)
-    utils.plot_heatmap(gw.grid, "Reward Map", False)
-    plt.subplot(1, 2, 2)
-    utils.plot_heatmap(grid_path, "Agent path", False)
+    # plt.subplot(1, 3, 1)
+    # utils.plot_heatmap(gw.grid, "Reward Map", False)
+    # plt.subplot(1, 3, 2)
+    # utils.plot_heatmap(grid_path, "Agent path", False)
+    # plt.subplot(1, 3, 3)
+    utils.plot_heatmap(grid_prob, "Trans Prob", False)
 
     plt.show()
 

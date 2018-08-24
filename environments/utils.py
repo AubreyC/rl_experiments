@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 13:59:33
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-24 14:47:41
+# @Last Modified time: 2018-08-24 18:50:26
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -30,7 +30,7 @@ def plot_heatmap(grid, title, show_flag = False):
     # Loop over data dimensions and create text annotations.
     for i in range(grid.shape[0]):
         for j in range(grid.shape[1]):
-            text = plt.text(j, i, grid[i, j],
+            text = plt.text(j, i, '{0:.2f}'.format(grid[i, j]),
                            ha="center", va="center", color="w")
 
     plt.title(title)

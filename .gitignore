@@ -1,5 +1,8 @@
 # Apple
 .DS_Store
 
+# Python
+*.pyc
+
 # Virtual Env
 ve_rl_experiments
