@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-24 18:55:17
+# @Last Modified time: 2018-08-25 13:01:40
 #
 # -----------------------------------------
 #
@@ -108,8 +108,8 @@ class Gridworld(object):
         # Generate the probability of chosing an action according to:
         # - action_id: action asked
         # - prob_trans: transition probability
-        prob_action = np.ones([5])*(float(1-self.prob_trans)/4);
-        prob_action[action_id] = self.prob_trans;
+        prob_action = np.ones([5])*(float(1-self.prob_trans)/5);
+        prob_action[action_id] = prob_action[action_id] + self.prob_trans;
 
         # Sample action
         action_exec_id = np.random.choice(np.arange(0,5), 1, True, prob_action);
@@ -140,8 +140,8 @@ class Gridworld(object):
     def compute_prob_state_action(self, s1_state_2d, s2_state_2d, action_id):
 
         # Compute probability of action actually taken
-        prob_action = np.ones([5])*(float(1-self.prob_trans)/4);
-        prob_action[action_id] = self.prob_trans;
+        prob_action = np.ones([5])*(float(1-self.prob_trans)/5);
+        prob_action[action_id] = prob_action[action_id]+ self.prob_trans;
 
         # Probability of reaching s2_state from s1_state if action_id is taken
         prob = 0;

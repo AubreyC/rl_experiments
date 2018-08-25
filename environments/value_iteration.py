@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 14:56:57
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-24 19:03:56
+# @Last Modified time: 2018-08-25 13:03:52
 #
 # -----------------------------------------
 #
@@ -49,15 +49,9 @@ def run_value_iteration(n_states, n_actions, P_trans, rewards, discount_f, conv_
                 q = sum(P_trans[s1_state, s2_state, i_action]*(rewards[s1_state] + discount_f*values_tmp[s2_state]) for s2_state in range(n_states));
                 q_f.append(q)
 
-                # for s2_state in range(n_states):
-                #     print(P_trans[s1_state, s2_state, i_action]*(rewards[s1_state] + discount_f*v_states[s2_state]))
-
-            print(q_f)
             v_states[s1_state] = max(q_f);
 
             error = max([error, abs(values_tmp[s1_state] - v_states[s1_state])]);
-
-        print("Error: {}".format(error))
 
     return v_states;
 
@@ -70,9 +64,7 @@ if __name__ == '__main__':
 
     v_states = run_value_iteration(n_states, n_actions, p_trans, rewards, 0.5);
 
-
     v_states = np.reshape(v_states, gw.grid.shape, order='F');
-    print(v_states.shape)
 
 
     plt.figure()
