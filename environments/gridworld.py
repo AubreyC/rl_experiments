@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-25 13:01:40
+# @Last Modified time: 2018-08-25 13:09:37
 #
 # -----------------------------------------
 #
@@ -30,9 +30,11 @@ class Gridworld(object):
         self.grid_size = size;
         self.grid = np.zeros([size,size]);
         self.grid[size-1, size-1] = 10;
+        self.n_states= self.grid.shape[0]*self.grid.shape[1];
 
         # (null, north, east, south, west)
         self.actions = ((0,0), (-1,0), (0,1), (1,0), (0,-1));
+        self.n_actions = len(self.actions);
 
         # Transition probability
         self.prob_trans = prob_trans;
@@ -108,11 +110,11 @@ class Gridworld(object):
         # Generate the probability of chosing an action according to:
         # - action_id: action asked
         # - prob_trans: transition probability
-        prob_action = np.ones([5])*(float(1-self.prob_trans)/5);
+        prob_action = np.ones([self.n_actions])*(float(1-self.prob_trans)/self.n_actions);
         prob_action[action_id] = prob_action[action_id] + self.prob_trans;
 
         # Sample action
-        action_exec_id = np.random.choice(np.arange(0,5), 1, True, prob_action);
+        action_exec_id = np.random.choice(np.arange(0,self.n_actions), 1, True, prob_action);
         action_exec_id = int(action_exec_id);
 
         # Move the agent according to the executed action
@@ -140,8 +142,8 @@ class Gridworld(object):
     def compute_prob_state_action(self, s1_state_2d, s2_state_2d, action_id):
 
         # Compute probability of action actually taken
-        prob_action = np.ones([5])*(float(1-self.prob_trans)/5);
-        prob_action[action_id] = prob_action[action_id]+ self.prob_trans;
+        prob_action = np.ones([self.n_actions])*(float(1-self.prob_trans)/self.n_actions);
+        prob_action[action_id] = prob_action[action_id] + self.prob_trans;
 
         # Probability of reaching s2_state from s1_state if action_id is taken
         prob = 0;
@@ -188,13 +190,10 @@ class Gridworld(object):
     ##
 
     def get_MDP_format(self):
-        # Get number of states and number of actions
-        n_states = self.grid.shape[0]* self.grid.shape[0];
-        n_actions = len(self.actions);
 
         # Compute the transition probability matrix: n_states x n_states x n_actions
         # P_trans[s1, s2, a] = probability of reaching s2 from s1 when taking action a
-        P_trans = np.zeros([n_states, n_states, n_actions]);
+        P_trans = np.zeros([self.n_states, self.n_states, self.n_actions]);
         for s1_i in range(self.grid.shape[0]):
             for s1_j in range(self.grid.shape[1]):
 
@@ -207,14 +206,14 @@ class Gridworld(object):
                         s2_state_1d = s2_i*self.grid.shape[1] + s2_j;
 
 
-                        for i_action in range(n_actions):
+                        for i_action in range(self.n_actions):
                             P_trans[s1_state_1d, s2_state_1d, i_action] = self.compute_prob_state_action((s1_i, s1_j), (s2_i, s2_j), i_action);
 
         # Simple reward model:
-        rewards = np.zeros(n_states);
+        rewards = np.zeros(self.n_states);
         rewards[-1] = self.grid[-1, -1];
 
-        return n_states, n_actions, P_trans, rewards;
+        return self.n_states, self.n_actions, P_trans, rewards;
 
 if __name__ == "__main__":
 
