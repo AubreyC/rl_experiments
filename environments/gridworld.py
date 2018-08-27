@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-25 13:09:37
+# @Last Modified time: 2018-08-27 15:13:30
 #
 # -----------------------------------------
 #
@@ -29,7 +29,14 @@ class Gridworld(object):
         # Create the grid of reward: 0 everywhere except at the ending state (bottom right)
         self.grid_size = size;
         self.grid = np.zeros([size,size]);
+
+        # Define terminal state:
+        self.terminal_state = (size-1, size-1);
+
+        # Set high reward at terminal state
         self.grid[size-1, size-1] = 10;
+
+        # N total states
         self.n_states= self.grid.shape[0]*self.grid.shape[1];
 
         # (null, north, east, south, west)
@@ -38,9 +45,6 @@ class Gridworld(object):
 
         # Transition probability
         self.prob_trans = prob_trans;
-
-        # Terminal state: bottom right corner of the grid
-        self.terminal_state = (size-1, size-1);
 
         # Current state of the agent
         self._current_state = (0,0);
@@ -205,15 +209,17 @@ class Gridworld(object):
                         # Compute state index in 1d representation
                         s2_state_1d = s2_i*self.grid.shape[1] + s2_j;
 
-
+                        # Build the transition probability matrix: probability of reaching s2 from s1 when taking action a
                         for i_action in range(self.n_actions):
                             P_trans[s1_state_1d, s2_state_1d, i_action] = self.compute_prob_state_action((s1_i, s1_j), (s2_i, s2_j), i_action);
 
-        # Simple reward model:
-        rewards = np.zeros(self.n_states);
-        rewards[-1] = self.grid[-1, -1];
+        # Reward model: reshape the grid reward into 1d array
+        rewards = np.reshape(self.grid, self.grid.shape[0]*self.grid.shape[1], order='F');
 
-        return self.n_states, self.n_actions, P_trans, rewards;
+        # Terminal state into 1d coordinate
+        terminal_state_1d = self.terminal_state[0]*self.grid.shape[1] + self.terminal_state[1];
+
+        return self.n_states, self.n_actions, P_trans, rewards, terminal_state_1d;
 
 if __name__ == "__main__":
 
