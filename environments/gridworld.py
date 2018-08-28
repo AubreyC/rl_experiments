@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-27 15:13:30
+# @Last Modified time: 2018-08-28 15:58:52
 #
 # -----------------------------------------
 #
@@ -25,6 +25,9 @@ class Gridworld(object):
     """GridWorld envirnoment for RL and IRL algorithms testing and evaluation"""
 
     def __init__(self, size, prob_trans=1):
+
+        print("Gridworld:\n");
+        print("size: {}x{}, trans prob: {}".format(size, size, prob_trans))
 
         # Create the grid of reward: 0 everywhere except at the ending state (bottom right)
         self.grid_size = size;
@@ -86,6 +89,13 @@ class Gridworld(object):
 
 
     """
+    Return the curretn state
+    """
+    def get_current_state(self):
+        return self._current_state;
+
+
+    """
     Check if the state is within the grid
     Return true of false
     """
@@ -136,7 +146,7 @@ class Gridworld(object):
         #     reward = -1;
 
         reward = self._get_reward(self._current_state)
-        print('Reward: {}'.format(reward))
+        # print('Reward: {}'.format(reward))
 
         return False, self._current_state, reward;
 
@@ -221,33 +231,50 @@ class Gridworld(object):
 
         return self.n_states, self.n_actions, P_trans, rewards, terminal_state_1d;
 
+
+    """
+    Convert 2d representstion (gridworld) into 1d representation (index of the state)
+    """
+    def convert_state_2d_to_1d(self, state_2d):
+        state_1d = state_2d[0]*self.grid.shape[1] + state_2d[1];
+        return state_1d;
+
+    """
+    Convert 1d representstion (index of the state) into 2d representation (gridworld)
+    """
+    def convert_state_1d_to_2d(self, state_1d):
+        state_2d_i = state_1d // self.grid.shape[1]
+        state_2d_j = state_1d % self.grid.shape[1]
+        state_2d = (state_2d_i, state_2d_j);
+        return state_2d
+
 if __name__ == "__main__":
 
+    print("\n*** Gridworld: Demo ***\n")
+
     # Create gridworld
-    gw = Gridworld(3,0.5);
+    trans_prob = 1;
+    size_grid = 10;
+    gw = Gridworld(size_grid,trans_prob);
 
     # Take some actions
     for i in range(30):
         done_flag, st, rw = gw.take_action(2);
         done_flag, st, rw = gw.take_action(3);
 
-    grid_prob = gw.compute_matrix_proc_state_action((0,1), 1);
-    print grid_prob
-
+    # Grid map of agent's path
+    setps = 0;
     grid_path = copy.copy(gw.grid);
     for state_visited in gw.get_state_log():
-        grid_path[state_visited[0],state_visited[1]] = state_visited[0]+state_visited[1];
+        grid_path[state_visited[0],state_visited[1]] = setps;
+        setps = setps + 1;
 
-    n_states, n_actions, p_trans, rewards = gw.get_MDP_format();
-    print(p_trans[:,:,1])
-    # plots
+    # Plots
     plt.figure()
-    # plt.subplot(1, 3, 1)
-    # utils.plot_heatmap(gw.grid, "Reward Map", False)
-    # plt.subplot(1, 3, 2)
-    # utils.plot_heatmap(grid_path, "Agent path", False)
-    # plt.subplot(1, 3, 3)
-    utils.plot_heatmap(grid_prob, "Trans Prob", False)
+    plt.subplot(1, 2, 1)
+    utils.plot_heatmap(gw.grid, "Reward Map", False)
+    plt.subplot(1, 2, 2)
+    utils.plot_heatmap(grid_path, "Agent path", False)
 
     plt.show()
 
