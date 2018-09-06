@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 14:56:57
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-28 15:59:10
+# @Last Modified time: 2018-09-06 22:19:53
 #
 # -----------------------------------------
 #
@@ -94,13 +94,12 @@ def get_optimal_policy(n_states, n_actions, P_trans, rewards, terminal_state_1d,
 
     return policy_opt;
 
-
 if __name__ == '__main__':
 
     print("\n*** Gridworld: Value Iteration demo ***\n")
 
     # Create gridworld
-    trans_prob = 1;
+    trans_prob = 0.5;
     size_grid = 10;
     gamma = 0.7;
     gw = gridworld.Gridworld(size_grid, trans_prob);
@@ -143,15 +142,19 @@ if __name__ == '__main__':
 
     # Plot results
     plt.figure()
-    plt.subplot(1, 2, 1)
-    utils.plot_heatmap(gw.grid, "Reward Map", False)
-    plt.subplot(1, 2, 2)
-    utils.plot_heatmap(v_states, "Value Function", False)
+    # plt.subplot(1, 2, 1)
+    utils.plot_heatmap(gw.grid, "Reward Map", False, )
 
     plt.figure()
-    plt.subplot(1, 2, 1)
-    utils.plot_heatmap(grid_path, "Agent Path", False)
-    plt.subplot(1, 2, 2)
+    # plt.subplot(1, 2, 2)
+    utils.plot_heatmap(v_states, "Value Function", False, True)
+
+    plt.figure()
+    # plt.subplot(1, 2, 1)
+    utils.plot_heatmap(grid_path, "Agent Path", False, False)
+
+    plt.figure()
+    # plt.subplot(1, 2, 2)
     utils.plot_heatmap(grid_pol, "Policy Opt", False)
 
     plt.show()

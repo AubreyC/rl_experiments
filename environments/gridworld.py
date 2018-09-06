@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-08-28 15:58:52
+# @Last Modified time: 2018-09-06 22:29:56
 #
 # -----------------------------------------
 #
@@ -43,7 +43,9 @@ class Gridworld(object):
         self.n_states= self.grid.shape[0]*self.grid.shape[1];
 
         # (null, north, east, south, west)
-        self.actions = ((0,0), (-1,0), (0,1), (1,0), (0,-1));
+        # self.actions = ((0,0), (-1,0), (0,1), (1,0), (0,-1));
+        self.actions = ((0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)); # (right, left, down, up, stay)
+
         self.n_actions = len(self.actions);
 
         # Transition probability
@@ -237,6 +239,14 @@ class Gridworld(object):
     """
     def convert_state_2d_to_1d(self, state_2d):
         state_1d = state_2d[0]*self.grid.shape[1] + state_2d[1];
+        return state_1d;
+
+
+    """
+    Convert 2d representstion (gridworld) into 1d representation (index of the state)
+    """
+    def convert_state_2d_to_1d_daz(self, state_2d):
+        state_1d = state_2d[1]*self.grid.shape[0] + state_2d[0];
         return state_1d;
 
     """
