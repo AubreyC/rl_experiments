@@ -33,7 +33,7 @@ def plot_heatmap(grid, title, show_flag = False, show_numbers = True):
     if(show_numbers):
         for i in range(grid.shape[0]):
             for j in range(grid.shape[1]):
-                text = plt.text(j, i, '{0:.3f}'.format(grid[i, j]),
+                text = plt.text(j, i, '{0:.1f}'.format(grid[i, j]),
                                ha="center", va="center", color="w")
 
     plt.title(title)

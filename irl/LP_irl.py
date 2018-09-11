@@ -101,9 +101,9 @@ if __name__ == '__main__':
     print("\n*** Gridworld: Value Iteration demo ***\n")
 
     # Create gridworld
-    trans_prob = 1;
+    trans_prob = 0.7;
     size_grid = 10;
-    gamma = 0.8;
+    gamma = 0.5;
     gw = gridworld.Gridworld(size_grid, trans_prob);
 
     # Convert gridwolrd in Finite discrete MDP format
@@ -149,10 +149,12 @@ if __name__ == '__main__':
 
     # Plot results
     plt.figure()
-    plt.subplot(1, 2, 1)
-    utils.plot_heatmap(gw.grid, "Reward Map", False)
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 3, 1)
+    utils.plot_heatmap(gw.grid, "Original Reward", False)
+    plt.subplot(1, 3, 2)
     utils.plot_heatmap(v_states, "Value Function", False)
+    plt.subplot(1, 3, 3)
+    utils.plot_heatmap(R_lp, "Recovered Reward", False)
 
     plt.figure()
     plt.subplot(1, 2, 1)
