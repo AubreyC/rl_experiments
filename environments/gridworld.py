@@ -286,6 +286,9 @@ if __name__ == "__main__":
     plt.subplot(1, 2, 2)
     utils.plot_heatmap(grid_path, "Agent path", False)
 
+    plt.figure()
+    utils.plot_heatmap(gw.grid, "Reward Map", False)
+    
     plt.show()
 
 

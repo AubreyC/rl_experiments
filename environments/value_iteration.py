@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 14:56:57
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-06 22:19:53
+# @Last Modified time: 2018-09-21 21:05:04
 #
 # -----------------------------------------
 #
@@ -155,7 +155,9 @@ if __name__ == '__main__':
 
     plt.figure()
     # plt.subplot(1, 2, 2)
-    utils.plot_heatmap(grid_pol, "Policy Opt", False)
+    utils.plot_policy(grid_pol, gw.actions , "Policy Opt", False)
+
+    # utils.plot_heatmap(grid_pol, "Policy Opt", False)
 
     plt.show()
 
