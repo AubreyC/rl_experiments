@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-09-24 15:11:21
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-27 14:47:24
+# @Last Modified time: 2018-09-27 18:06:57
 
 from __future__ import print_function
 
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     # Create gridworld
     trans_prob = 0.7;
     size_grid = 10;
-    gamma = 0.8;
+    gamma = 0.95;
     gw = gridworld.Gridworld(size_grid, trans_prob);
 
     # Convert gridwolrd in Finite discrete MDP format
@@ -151,7 +151,8 @@ if __name__ == '__main__':
     for i in range(N_dem):
 
         # Random start
-        state_init_1d = np.random.randint(0, n_states, 1)[0];
+        # state_init_1d = np.random.randint(0, n_states, 1)[0];
+        state_init_1d = 0;
         state_init_2d = gw.convert_state_1d_to_2d(state_init_1d);
         gw.reset_agent(state_init_2d);
 
@@ -164,12 +165,17 @@ if __name__ == '__main__':
         dem_paths.append(path_1d);
 
 
-    print("Value:\n", end='');
-    for i in range(v_states.shape[0]):
-        for j in range(v_states.shape[0]):
-            print("%.4f " % (v_states[i,j]), end='')
-        print("\n", end='')
-    print("\n", end='')
+    utils.print_value(v_states);
+
+    # Create a grid to show the optimal policy:
+    # 0: stay, 1: north, 2:east, 3: south, 4: west
+    grid_pol = copy.copy(gw.grid);
+    for s_i in range(grid_pol.shape[0]):
+        for s_j in range(grid_pol.shape[1]):
+            s_1d = gw.convert_state_2d_to_1d((s_i, s_j));
+            a_opt = policy_opt[s_1d];
+            grid_pol[s_i,s_j] = a_opt;
+    utils.print_policy(grid_pol, gw.actions);
 
 
     # # Create a grid to show the optimal policy:

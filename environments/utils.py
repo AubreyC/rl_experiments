@@ -2,13 +2,48 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 13:59:33
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-06 21:06:44
+# @Last Modified time: 2018-09-27 18:07:35
+from __future__ import print_function
 
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+def print_value(v_states):
+    print("Value:\n", end='');
+    for i in range(v_states.shape[0]):
+        for j in range(v_states.shape[0]):
+            print("%.4f " % (v_states[i,j]), end='')
+        print("\n", end='')
+    print("\n", end='')
+
+def print_policy(grid_policy, actions):
+
+    # Loop over data dimensions and create text annotations.
+    for i in range(grid_policy.shape[0]):
+        for j in range(grid_policy.shape[1]):
+
+            act_str = "";
+            if actions[int(grid_policy[i, j])] == (0,1):
+                act_str = ">";
+
+            elif actions[int(grid_policy[i, j])] == (0,-1):
+                act_str = "<";
+
+            elif actions[int(grid_policy[i, j])] == (1,0):
+                act_str = "v";
+
+            elif actions[int(grid_policy[i, j])] == (0,-1):
+                act_str = "^";
+
+            elif actions[int(grid_policy[i, j])] == (0,0):
+                act_str = "o";
+
+            print("%s " % (act_str), end='');
+
+        print("\n", end='')
 
 """
 Draw heatmap: Inspired from https://matplotlib.org/gallery/images_contours_and_fields/image_annotated_heatmap.html
