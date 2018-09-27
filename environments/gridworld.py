@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-27 10:49:44
+# @Last Modified time: 2018-09-27 14:25:56
 #
 # -----------------------------------------
 #
@@ -31,7 +31,7 @@ class Gridworld(object):
 
         # Create the grid of reward: 0 everywhere except at the ending state (bottom right)
         self.grid_size = size;
-        self.grid = np.zeros([size,size]);
+        self.grid = np.zeros([size,size], np.float64);
 
         # Define terminal state:
         self.terminal_state = (size-1, size-1);
@@ -147,7 +147,7 @@ class Gridworld(object):
         # Generate the probability of chosing an action according to:
         # - action_id: action asked
         # - prob_trans: transition probability
-        prob_action = np.ones([self.n_actions])*(float(1-self.prob_trans)/self.n_actions);
+        prob_action = np.ones([self.n_actions], np.float64)*(float(1-self.prob_trans)/self.n_actions);
         prob_action[action_id] = prob_action[action_id] + self.prob_trans;
 
         # Sample action
@@ -179,7 +179,7 @@ class Gridworld(object):
     def compute_prob_state_action(self, s1_state_2d, s2_state_2d, action_id):
 
         # Compute probability of action actually taken
-        prob_action = np.ones([self.n_actions])*(float(1-self.prob_trans)/self.n_actions);
+        prob_action = np.ones([self.n_actions], np.float64)*(float(1-self.prob_trans)/self.n_actions);
         prob_action[action_id] = prob_action[action_id] + self.prob_trans;
 
         # Probability of reaching s2_state from s1_state if action_id is taken
@@ -210,7 +210,7 @@ class Gridworld(object):
     """
     def compute_matrix_proc_state_action(self, s1_state_2d, action_id):
 
-        grid_prob = np.zeros(self.grid.shape);
+        grid_prob = np.zeros(self.grid.shape, np.float64);
         for s1_i in range(self.grid.shape[0]):
             for s1_j in range(self.grid.shape[1]):
 
@@ -230,7 +230,7 @@ class Gridworld(object):
 
         # Compute the transition probability matrix: n_states x n_states x n_actions
         # P_trans[s1, s2, a] = probability of reaching s2 from s1 when taking action a
-        P_trans = np.zeros([self.n_states, self.n_states, self.n_actions]);
+        P_trans = np.zeros([self.n_states, self.n_states, self.n_actions], np.float64);
         for s1_i in range(self.grid.shape[0]):
             for s1_j in range(self.grid.shape[1]):
 
@@ -262,9 +262,6 @@ class Gridworld(object):
         state_1d = state_2d[0]*self.grid.shape[1] + state_2d[1];
         return state_1d;
 
-    def convert_state_2d_to_1d(self, state_2d):
-        state_1d = state_2d[0]*self.grid.shape[1] + state_2d[1];
-        return state_1d;
     # """
     # Convert 2d representstion (gridworld) into 1d representation (index of the state)
     # """

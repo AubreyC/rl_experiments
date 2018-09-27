@@ -18,3 +18,10 @@ Environments:
 Algorithms:
 
 - Value Iteration: "Reinforcement Learning: An Introduction" Richard S. Sutton and Andrew G. Barto section 4.4
+
+
+## Notes
+
+Create a virtual env on MacOS:
+
+    virtualenv -p /usr/local/bin/python3 virtual_env

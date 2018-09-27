@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 14:56:57
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-27 11:02:53
+# @Last Modified time: 2018-09-27 14:28:08
 #
 # -----------------------------------------
 #
@@ -34,7 +34,7 @@ inputs:
     discount_f.        discount factor applied to the cummulative reward
     conv_error         convergence criterion
 """
-def run_value_iteration(n_states, n_actions, P_trans, rewards, terminal_state_1d, discount_f, conv_error = 0.01):
+def run_value_iteration(n_states, n_actions, P_trans, rewards, terminal_state_1d, discount_f, conv_error = 1e-9):
 
     # Init Value function with the reward map
     v_states = rewards.copy();
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     print("\n*** Gridworld: Value Iteration demo ***\n")
 
     # Create gridworld
-    trans_prob = 0.5;
+    trans_prob = 0.8;
     size_grid = 10;
     gamma = 0.7;
     gw = gridworld.Gridworld(size_grid, trans_prob);

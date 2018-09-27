@@ -2,8 +2,9 @@
 # @Author: Aubrey
 # @Date:   2018-09-24 15:11:21
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-27 10:28:44
+# @Last Modified time: 2018-09-27 14:47:24
 
+from __future__ import print_function
 
 import math
 import numpy as np
@@ -20,6 +21,7 @@ sys.path.append("../environments")
 import utils
 import gridworld
 import value_iteration
+
 
 def run_irl_max_ent(n_states, n_actions, p_trans, terminal_state_1d, gamma, feat_states, dem_paths, learning_rate = 0.01, max_path_step=100):
 
@@ -121,7 +123,7 @@ if __name__ == '__main__':
 
     # Create gridworld
     trans_prob = 0.7;
-    size_grid = 5;
+    size_grid = 10;
     gamma = 0.8;
     gw = gridworld.Gridworld(size_grid, trans_prob);
 
@@ -160,6 +162,46 @@ if __name__ == '__main__':
         path_1d = gw.convert_state_log_2d_to_1d(path_2d);
 
         dem_paths.append(path_1d);
+
+
+    print("Value:\n", end='');
+    for i in range(v_states.shape[0]):
+        for j in range(v_states.shape[0]):
+            print("%.4f " % (v_states[i,j]), end='')
+        print("\n", end='')
+    print("\n", end='')
+
+
+    # # Create a grid to show the optimal policy:
+    # # 0: stay, 1: north, 2:east, 3: south, 4: west
+    # grid_pol = copy.copy(gw.grid);
+    # for s_i in range(grid_pol.shape[0]):
+    #     for s_j in range(grid_pol.shape[1]):
+    #         s_1d = gw.convert_state_2d_to_1d((s_i, s_j));
+    #         a_opt = policy_opt[s_1d];
+    #         grid_pol[s_i,s_j] = a_opt;
+
+
+    # for path_1d in dem_paths:
+
+    #     grid_path = copy.copy(gw.grid);
+    #     steps = 0;
+    #     for state_1d in path_1d:
+
+    #         state_2d = gw.convert_state_1d_to_2d(state_1d);
+    #         grid_path[state_2d[0],state_2d[1]] = steps; #state_visited[0]+state_visited[1];
+    #         steps = steps + 1;
+
+
+    #     plt.figure()
+    #     plt.subplot(1, 3, 1)
+    #     utils.plot_heatmap(grid_path, "Agent Path", False)
+    #     plt.subplot(1, 3, 2)
+    #     utils.plot_heatmap(v_states, "Value Function", False)
+    #     plt.subplot(1, 3, 3)
+    #     utils.plot_policy(grid_pol, gw.actions , "Policy Opt", False)
+
+    #     plt.show()
 
 
     # # Run Maximum Entropy IRL
