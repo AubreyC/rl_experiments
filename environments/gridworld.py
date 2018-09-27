@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 10:00:02
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-06 22:29:56
+# @Last Modified time: 2018-09-27 10:49:44
 #
 # -----------------------------------------
 #
@@ -37,7 +37,7 @@ class Gridworld(object):
         self.terminal_state = (size-1, size-1);
 
         # Set high reward at terminal state
-        self.grid[size-1, size-1] = 10;
+        self.grid[size-1, size-1] = 1;
 
         # N total states
         self.n_states= self.grid.shape[0]*self.grid.shape[1];
@@ -55,6 +55,14 @@ class Gridworld(object):
         self._current_state = (0,0);
 
         # State log
+        self._state_log = [];
+
+
+    """
+    Reset the agent
+    """
+    def reset_agent(self, state_init):
+        self.set_start_state(state_init);
         self._state_log = [];
 
     """
@@ -82,6 +90,19 @@ class Gridworld(object):
         self._state_log.append(new_state);
         self._current_state = new_state;
 
+
+    def run_policy(self, policy, max_step=100):
+
+        step_ind = 0;
+        while (not self.is_over(self.get_current_state()) and step_ind  < max_step):
+            s_1d = self.convert_state_2d_to_1d(self.get_current_state());
+            a_opt = policy[s_1d];
+            done_flag, st_2d, rw = self.take_action(a_opt);
+
+            # Keep track of steps number
+            step_ind = step_ind + 1;
+
+        return self.get_state_log();
 
     """
     Return the state log, which coresponds to the states visited by the agents
@@ -241,13 +262,15 @@ class Gridworld(object):
         state_1d = state_2d[0]*self.grid.shape[1] + state_2d[1];
         return state_1d;
 
-
-    """
-    Convert 2d representstion (gridworld) into 1d representation (index of the state)
-    """
-    def convert_state_2d_to_1d_daz(self, state_2d):
-        state_1d = state_2d[1]*self.grid.shape[0] + state_2d[0];
+    def convert_state_2d_to_1d(self, state_2d):
+        state_1d = state_2d[0]*self.grid.shape[1] + state_2d[1];
         return state_1d;
+    # """
+    # Convert 2d representstion (gridworld) into 1d representation (index of the state)
+    # """
+    # def convert_state_2d_to_1d_daz(self, state_2d):
+    #     state_1d = state_2d[1]*self.grid.shape[0] + state_2d[0];
+    #     return state_1d;
 
     """
     Convert 1d representstion (index of the state) into 2d representation (gridworld)
@@ -257,6 +280,17 @@ class Gridworld(object):
         state_2d_j = state_1d % self.grid.shape[1]
         state_2d = (state_2d_i, state_2d_j);
         return state_2d
+
+
+    def convert_state_log_2d_to_1d(self, state_log):
+
+        state_log_1d = [];
+        for s_2d in state_log:
+            state_log_1d.append(self.convert_state_2d_to_1d(s_2d));
+
+        return state_log_1d;
+
+
 
 if __name__ == "__main__":
 

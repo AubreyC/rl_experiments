@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-24 14:56:57
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-21 21:05:04
+# @Last Modified time: 2018-09-27 11:02:53
 #
 # -----------------------------------------
 #
@@ -38,15 +38,11 @@ def run_value_iteration(n_states, n_actions, P_trans, rewards, terminal_state_1d
 
     # Init Value function with the reward map
     v_states = rewards.copy();
-
-    # Init the error higher than te criterion to start the loop
-    error = conv_error + 1;
+    # v_states = np.zeros([n_states]);
 
     # Check convergence criterion
-    while error > conv_error:
+    while True:
 
-        # Go over all states
-        error = 0;
         for s1_state in range(n_states):
 
             # If terminal state: stop
@@ -65,8 +61,10 @@ def run_value_iteration(n_states, n_actions, P_trans, rewards, terminal_state_1d
             # Value function corresponds to the action that maximizes the cumulative reward
             v_states[s1_state] = max(q_f);
 
-            # Save the largest update of value function, used for convergence criterion
-            error = max([error, abs(values_tmp[s1_state] - v_states[s1_state])]);
+        # Convergence criterion
+        error = max( [abs(values_tmp[s1_state] - v_states[s1_state]) for s1_state in range(n_states)]);
+        if error < conv_error:
+            break;
 
     return v_states;
 

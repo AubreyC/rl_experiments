@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-08-27 15:26:27
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-06 22:29:12
+# @Last Modified time: 2018-09-24 16:31:56
 #
 # -----------------------------------------
 #
@@ -28,8 +28,7 @@ import utils
 import gridworld
 import value_iteration
 
-
-def lp_irl(n_states, n_actions, P_trans, gamma, policy_opt, lambda_1=10, R_MAX = 10):
+def run_irl_lp(n_states, n_actions, P_trans, gamma, policy_opt, lambda_1=10, R_MAX = 10):
 
     # Inspired from: http://matthewja.com/pdfs/irl.pdf
 
@@ -117,7 +116,7 @@ if __name__ == '__main__':
     policy_opt = value_iteration.get_optimal_policy(n_states, n_actions, p_trans, rewards, terminal_state_1d, gamma);
 
     print("Policy: {}".format(policy_opt))
-    R_lp = lp_irl(n_states, n_actions, p_trans, gamma, policy_opt);
+    R_lp = run_irl_lp(n_states, n_actions, p_trans, gamma, policy_opt);
     R_lp = np.reshape(R_lp, (size_grid, size_grid), order='C')
     print("Reward found:\n{}\n".format(R_lp))
 
