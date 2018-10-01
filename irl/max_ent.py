@@ -2,7 +2,7 @@
 # @Author: Aubrey
 # @Date:   2018-09-24 15:11:21
 # @Last Modified by:   Aubrey
-# @Last Modified time: 2018-09-27 18:06:57
+# @Last Modified time: 2018-09-30 21:17:28
 
 from __future__ import print_function
 
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     # Create gridworld
     trans_prob = 0.7;
     size_grid = 10;
-    gamma = 0.95;
+    gamma = 0.8;
     gw = gridworld.Gridworld(size_grid, trans_prob);
 
     # Convert gridwolrd in Finite discrete MDP format
@@ -151,8 +151,8 @@ if __name__ == '__main__':
     for i in range(N_dem):
 
         # Random start
-        # state_init_1d = np.random.randint(0, n_states, 1)[0];
-        state_init_1d = 0;
+        state_init_1d = np.random.randint(0, n_states, 1)[0];
+        # state_init_1d = 0;
         state_init_2d = gw.convert_state_1d_to_2d(state_init_1d);
         gw.reset_agent(state_init_2d);
 
@@ -176,6 +176,7 @@ if __name__ == '__main__':
             a_opt = policy_opt[s_1d];
             grid_pol[s_i,s_j] = a_opt;
     utils.print_policy(grid_pol, gw.actions);
+
 
 
     # # Create a grid to show the optimal policy:
@@ -213,20 +214,33 @@ if __name__ == '__main__':
     # # Run Maximum Entropy IRL
     r_maxent = run_irl_max_ent(n_states, n_actions, p_trans, terminal_state_1d, gamma, feat_states, dem_paths, max_path_step=50);
 
-    r_maxent = np.reshape(r_maxent, (size_grid, size_grid), order='C')
-    r_maxent = r_maxent.astype(float)
+    # Run Value Iteration algortims
+    v_states_maxent = value_iteration.run_value_iteration(n_states, n_actions, p_trans, r_maxent, terminal_state_1d, gamma);
+    v_states_maxent = np.reshape(v_states_maxent, gw.grid.shape, order='F');
+    v_states_maxent = v_states_maxent.astype(float)
 
-    print("r_maxent:{}".format(r_maxent));
+    # Transform in grid form
+    r_maxent_grid = np.reshape(r_maxent, (size_grid, size_grid), order='C')
+    r_maxent_grid = r_maxent_grid.astype(float)
+
+
+    print("r_maxent_grid:{}".format(r_maxent_grid));
 
     # Plot results
     plt.figure()
-    plt.subplot(1, 3, 1)
+    plt.subplot(1, 2, 1)
     utils.plot_heatmap(gw.grid, "Original Reward", False)
-    plt.subplot(1, 3, 2)
+    plt.subplot(1, 2, 2)
     utils.plot_heatmap(v_states, "Value Function", False)
-    plt.subplot(1, 3, 3)
-    utils.plot_heatmap(r_maxent, "Recovered Reward: MaxEnt", False)
+
+    plt.figure()
+    plt.subplot(1, 2, 1)
+    utils.plot_heatmap(r_maxent_grid, "Recovered Reward: MaxEnt", False)
+    plt.subplot(1, 2, 2)
+    utils.plot_heatmap(v_states_maxent, "Recovered Value Function: MaxEnt", False)
+
     plt.show()
+
 
 
 
