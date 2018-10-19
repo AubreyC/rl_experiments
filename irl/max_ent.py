@@ -175,7 +175,7 @@ if __name__ == '__main__':
             s_1d = gw.convert_state_2d_to_1d((s_i, s_j));
             a_opt = policy_opt[s_1d];
             grid_pol[s_i,s_j] = a_opt;
-    utils.print_policy(grid_pol, gw.actions);
+    utils.print_policy(grid_pol, gw.actions_2d);
 
 
 

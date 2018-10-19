@@ -124,8 +124,8 @@ if __name__ == '__main__':
     # It's interesting to note that the optimal policy "chose" to go all the way to the right side and down
     # This is due to the argmax function taking the first occurence of the maximum Q_function value when chosing the action
     # Due to the order of actions, it choses to go right (even if goind south would be as optimal)
-    while (not gw.is_over(gw.get_current_state())):
-        s_1d = gw.convert_state_2d_to_1d(gw.get_current_state());
+    while (not gw.is_over(gw.get_current_state_2d())):
+        s_1d = gw.convert_state_2d_to_1d(gw.get_current_state_2d());
         a_opt = policy_opt[s_1d];
         done_flag, st, rw = gw.take_action(a_opt);
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     # The number of steps of the agent is shwon
     grid_path = copy.copy(gw.grid);
     steps = 0;
-    for state_visited in gw.get_state_log():
+    for state_visited in gw.get_state_2d_log():
         grid_path[state_visited[0],state_visited[1]] = steps; #state_visited[0]+state_visited[1];
         steps = steps + 1;
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     plt.subplot(1, 2, 1)
     utils.plot_heatmap(grid_path, "Agent Path", False)
     plt.subplot(1, 2, 2)
-    utils.plot_policy(grid_pol, gw.actions , "Policy Opt", False)
+    utils.plot_policy(grid_pol, gw.actions_2d , "Policy Opt", False)
 
     plt.figure()
     utils.plot_heatmap(R_lp, "Reward recovered", False)

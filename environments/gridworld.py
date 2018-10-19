@@ -34,7 +34,7 @@ class Gridworld(object):
         self.grid = np.zeros([size,size], np.float64);
 
         # Define terminal state:
-        self.terminal_state = (size-1, size-1);
+        self.terminal_state_2d = (size-1, size-1);
 
         # Set high reward at terminal state
         self.grid[size-1, size-1] = 1;
@@ -44,51 +44,51 @@ class Gridworld(object):
 
         # (null, north, east, south, west)
         # self.actions = ((0,0), (-1,0), (0,1), (1,0), (0,-1));
-        self.actions = ((0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)); # (right, left, down, up, stay)
+        self.actions_2d = ((0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)); # (right, left, down, up, stay)
 
-        self.n_actions = len(self.actions);
+        self.n_actions = len(self.actions_2d);
 
         # Transition probability
         self.prob_trans = prob_trans;
 
         # Current state of the agent
-        self._current_state = (0,0);
+        self._current_state_2d = (0,0);
 
         # State log
-        self._state_log = [];
+        self._state_2d_log = [];
 
 
     """
     Reset the agent
     """
-    def reset_agent(self, state_init):
-        self.set_start_state(state_init);
-        self._state_log = [];
+    def reset_agent(self, state_2d_init):
+        self.set_start_state_2d(state_2d_init);
+        self._state_2d_log = [];
 
     """
     Return the reward corresponding to the specified state
     """
-    def _get_reward(self, state):
-        return self.grid[state[0], state[1]];
+    def _get_reward(self, state_2d):
+        return self.grid[state_2d[0], state_2d[1]];
 
     """
     Return true of the agents reached the terminal state
     """
-    def is_over(self, state):
-        return state == self.terminal_state;
+    def is_over(self, state_2d):
+        return state_2d == self.terminal_state_2d;
 
     """
     Set the start state of the agent
     """
-    def set_start_state(self, start_state):
-        self._current_state = start_state;
+    def set_start_state_2d(self, start_state_2d):
+        self._current_state_2d = start_state_2d;
 
     """
     Move the agent to the new state, keep track of states
     """
-    def move_current_state(self, new_state):
-        self._state_log.append(new_state);
-        self._current_state = new_state;
+    def move_current_state_2d(self, new_state_2d):
+        self._state_2d_log.append(new_state_2d);
+        self._current_state_2d = new_state_2d;
 
 
     def run_policy(self, policy, max_step=100):
@@ -96,36 +96,36 @@ class Gridworld(object):
         step_ind = 0;
         # while (not self.is_over(self.get_current_state()) and step_ind  < max_step):
         while (step_ind  < max_step):
-            s_1d = self.convert_state_2d_to_1d(self.get_current_state());
+            s_1d = self.convert_state_2d_to_1d(self.get_current_state_2d());
             a_opt = policy[s_1d];
             done_flag, st_2d, rw = self.take_action(a_opt);
 
             # Keep track of steps number
             step_ind = step_ind + 1;
 
-        return self.get_state_log();
+        return self.get_state_2d_log();
 
     """
     Return the state log, which coresponds to the states visited by the agents
     """
-    def get_state_log(self):
-        return self._state_log
+    def get_state_2d_log(self):
+        return self._state_2d_log
 
 
     """
     Return the curretn state
     """
-    def get_current_state(self):
-        return self._current_state;
+    def get_current_state_2d(self):
+        return self._current_state_2d;
 
 
     """
     Check if the state is within the grid
     Return true of false
     """
-    def is_in_grid(self, state):
+    def is_in_grid(self, state_2d):
 
-        flag = state[0] >= 0 and state[0] < self.grid_size and state[1] >= 0 and state[1] < self.grid_size;
+        flag = state_2d[0] >= 0 and state_2d[0] < self.grid_size and state_2d[1] >= 0 and state_2d[1] < self.grid_size;
 
         return flag
 
@@ -142,8 +142,8 @@ class Gridworld(object):
     def take_action(self, action_id):
 
         # Do not move is at terminal state
-        if self.is_over(self._current_state):
-            return True, self._current_state, 0;
+        if self.is_over(self._current_state_2d):
+            return True, self._current_state_2d, 0;
 
         # Generate the probability of chosing an action according to:
         # - action_id: action asked
@@ -156,12 +156,12 @@ class Gridworld(object):
         action_exec_id = int(action_exec_id);
 
         # Move the agent according to the executed action
-        action_exec = self.actions[action_exec_id];
-        new_state = (self._current_state[0] + action_exec[0], self._current_state[1] + action_exec[1]);
+        action_exec_2d = self.actions_2d[action_exec_id];
+        new_state_2d = (self._current_state_2d[0] + action_exec_2d[0], self._current_state_2d[1] + action_exec_2d[1]);
 
         # Ensure new state remains in the grid, do not move the agent if outside the grid
-        if self.is_in_grid(new_state):
-            self.move_current_state(new_state);
+        if self.is_in_grid(new_state_2d):
+            self.move_current_state_2d(new_state_2d);
         #     reward = self._get_reward(self._current_state)
         #     print(reward)
 
@@ -169,10 +169,10 @@ class Gridworld(object):
         # else:
         #     reward = -1;
 
-        reward = self._get_reward(self._current_state)
+        reward = self._get_reward(self._current_state_2d)
         # print('Reward: {}'.format(reward))
 
-        return False, self._current_state, reward;
+        return False, self._current_state_2d, reward;
 
     """
     Compute the probability of reaching s2_state from s1_state if action_id is taken
@@ -195,19 +195,19 @@ class Gridworld(object):
         prob = 0;
 
         # Iterate through possible actions
-        for i_action in range(len(self.actions)):
+        for i_action in range(self.n_actions):
 
             # Get action
-            action = self.actions[i_action];
+            action_2d = self.actions_2d[i_action];
             # Compute new state if this action is executed
-            new_state = (s1_state_2d[0] + action[0], s1_state_2d[1] + action[1]);
+            new_state_2d = (s1_state_2d[0] + action_2d[0], s1_state_2d[1] + action_2d[1]);
             # Stay at previous state is new state is out of the grid
-            if not self.is_in_grid(new_state):
-                new_state = s1_state_2d;
+            if not self.is_in_grid(new_state_2d):
+                new_state_2 = s1_state_2d;
 
             # If s2_state is reached, add sum probability of the actions that resulted in reaching s2_state
             # Important for the border states
-            if new_state == s2_state_2d:
+            if new_state_2d == s2_state_2d:
                 prob = prob + prob_action[i_action]
 
         return prob
@@ -256,12 +256,12 @@ class Gridworld(object):
                             P_trans[s1_state_1d, s2_state_1d, i_action] = self.compute_prob_state_action((s1_i, s1_j), (s2_i, s2_j), i_action);
 
         # Reward model: reshape the grid reward into 1d array
-        rewards = np.reshape(self.grid, self.grid.shape[0]*self.grid.shape[1], order='F');
+        rewards_1d = np.reshape(self.grid, self.grid.shape[0]*self.grid.shape[1], order='F');
 
         # Terminal state into 1d coordinate
-        terminal_state_1d = self.terminal_state[0]*self.grid.shape[1] + self.terminal_state[1];
+        terminal_state_1d = self.terminal_state_2d[0]*self.grid.shape[1] + self.terminal_state_2d[1];
 
-        return self.n_states, self.n_actions, P_trans, rewards, terminal_state_1d;
+        return self.n_states, self.n_actions, P_trans, rewards_1d, terminal_state_1d;
 
 
     """
@@ -288,10 +288,10 @@ class Gridworld(object):
         return state_2d
 
 
-    def convert_state_log_2d_to_1d(self, state_log):
+    def convert_state_log_2d_to_1d(self, state_2d_log):
 
         state_log_1d = [];
-        for s_2d in state_log:
+        for s_2d in state_2d_log:
             state_log_1d.append(self.convert_state_2d_to_1d(s_2d));
 
         return state_log_1d;
@@ -313,11 +313,11 @@ if __name__ == "__main__":
         done_flag, st, rw = gw.take_action(3);
 
     # Grid map of agent's path
-    setps = 0;
+    steps = 0;
     grid_path = copy.copy(gw.grid);
-    for state_visited in gw.get_state_log():
-        grid_path[state_visited[0],state_visited[1]] = setps;
-        setps = setps + 1;
+    for state_2d_visited in gw.get_state_2d_log():
+        grid_path[state_2d_visited[0],state_2d_visited[1]] = steps;
+        steps = steps + 1;
 
     # Plots
     plt.figure()
@@ -328,7 +328,7 @@ if __name__ == "__main__":
 
     plt.figure()
     utils.plot_heatmap(gw.grid, "Reward Map", False)
-    
+
     plt.show()
 
 
