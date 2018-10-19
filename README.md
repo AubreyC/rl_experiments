@@ -11,7 +11,7 @@ Create a virtual env on MacOS:
 Use virtual environment to simplify the setup process:
 
     virtualenv ve_rl_experiments
-    pip install req_virtual_env.txt
+    pip install -r req_virtual_env.txt
 
 ## Environments
 

@@ -94,7 +94,8 @@ class Gridworld(object):
     def run_policy(self, policy, max_step=100):
 
         step_ind = 0;
-        while (not self.is_over(self.get_current_state()) and step_ind  < max_step):
+        # while (not self.is_over(self.get_current_state()) and step_ind  < max_step):
+        while (step_ind  < max_step):
             s_1d = self.convert_state_2d_to_1d(self.get_current_state());
             a_opt = policy[s_1d];
             done_flag, st_2d, rw = self.take_action(a_opt);
@@ -177,6 +178,14 @@ class Gridworld(object):
     Compute the probability of reaching s2_state from s1_state if action_id is taken
     """
     def compute_prob_state_action(self, s1_state_2d, s2_state_2d, action_id):
+
+        # If s1_state_2d is final state, it is stuck in it
+        if self.is_over(s1_state_2d):
+            prob = 0;
+            if s1_state_2d == s2_state_2d:
+                prob = 1;
+
+            return prob;
 
         # Compute probability of action actually taken
         prob_action = np.ones([self.n_actions], np.float64)*(float(1-self.prob_trans)/self.n_actions);

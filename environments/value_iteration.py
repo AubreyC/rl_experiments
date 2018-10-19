@@ -37,17 +37,13 @@ inputs:
 def run_value_iteration(n_states, n_actions, P_trans, rewards, terminal_state_1d, discount_f, conv_error = 1e-9):
 
     # Init Value function with the reward map
-    v_states = rewards.copy();
-    # v_states = np.zeros([n_states]);
+    #v_states = rewards.copy();
+    v_states = np.zeros([n_states]);
 
     # Check convergence criterion
     while True:
 
         for s1_state in range(n_states):
-
-            # If terminal state: stop
-            if s1_state == terminal_state_1d:
-                continue;
 
             # Save value function to update it after going through all the states
             values_tmp = v_states.copy()
@@ -55,7 +51,7 @@ def run_value_iteration(n_states, n_actions, P_trans, rewards, terminal_state_1d
             # Compute the Q function for all the actions avaible (based on the Bellman operator)
             q_f = []
             for i_action in range(n_actions):
-                q = sum(P_trans[s1_state, s2_state, i_action]*(rewards[s1_state] + discount_f*values_tmp[s2_state]) for s2_state in range(n_states));
+                q = sum(P_trans[s1_state, s2_state, i_action]*(rewards[s2_state] + discount_f*values_tmp[s2_state]) for s2_state in range(n_states));
                 q_f.append(q)
 
             # Value function corresponds to the action that maximizes the cumulative reward
